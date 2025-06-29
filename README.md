@@ -1,70 +1,223 @@
-# Getting Started with Create React App
+# 🤖 Amplify Q Chatbot
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A production-ready React chatbot application powered by Amazon Bedrock's Claude 3.5 Haiku model, deployed on AWS with enterprise-grade security.
 
-## Available Scripts
+## 🌟 Features
 
-In the project directory, you can run:
+- **AI-Powered Chat**: Integration with Amazon Bedrock Claude 3.5 Haiku
+- **Modern React UI**: Clean, responsive chat interface
+- **AWS Amplify Gen2**: Serverless backend architecture
+- **Enterprise Security**: Private S3 + CloudFront with Origin Access Control
+- **Production Ready**: Deployed with HTTPS, CORS, and proper error handling
 
-### `npm start`
+## 🏗️ Architecture
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```
+Internet → CloudFront → Private S3 Bucket (React App)
+Internet → API Gateway → Lambda → Amazon Bedrock (Claude 3.5 Haiku)
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### AWS Services Used
+- **Frontend**: S3 + CloudFront
+- **Backend**: Lambda + API Gateway
+- **AI**: Amazon Bedrock (Claude 3.5 Haiku)
+- **Security**: IAM + Origin Access Control
+- **Monitoring**: CloudWatch
 
-### `npm test`
+## 🚀 Live Demo
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Frontend**: https://dj47x93x5c19.cloudfront.net
+- **API Endpoint**: https://mc54cs2ya8.execute-api.us-west-2.amazonaws.com/prod/bedrock-chat
 
-### `npm run build`
+## 📋 Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- AWS Account with Bedrock access
+- Node.js 18+ 
+- AWS CLI configured
+- Amazon Bedrock Claude 3.5 Haiku model access enabled
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🛠️ Local Development
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Clone the Repository
+```bash
+git clone https://github.com/raycblai/amplify-q-chatbot.git
+cd amplify-q-chatbot
+```
 
-### `npm run eject`
+### 2. Install Dependencies
+```bash
+npm install
+cd amplify && npm install && cd ..
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 3. Configure Environment
+```bash
+cp .env.example .env
+# Edit .env with your AWS configuration
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 4. Start Development Server
+```bash
+# Terminal 1: Start the proxy server
+npm run server
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+# Terminal 2: Start React app
+npm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Visit `http://localhost:3000` to see the app.
 
-## Learn More
+## 🚀 Production Deployment
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Quick Deploy
+```bash
+chmod +x deploy-production.sh
+./deploy-production.sh
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Manual Deployment Steps
 
-### Code Splitting
+1. **Deploy Backend**
+```bash
+cd amplify
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+2. **Build Frontend**
+```bash
+npm run build
+```
 
-### Analyzing the Bundle Size
+3. **Deploy to AWS**
+- Lambda function with Bedrock permissions
+- API Gateway with CORS
+- S3 bucket (private)
+- CloudFront distribution with OAC
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+See [PRODUCTION-DEPLOYMENT-COMPLETE.md](./PRODUCTION-DEPLOYMENT-COMPLETE.md) for detailed deployment guide.
 
-### Making a Progressive Web App
+## 📁 Project Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+amplify-q-chatbot/
+├── public/                 # Static assets
+├── src/                   # React source code
+│   ├── App.js            # Main app component
+│   ├── aws-config.js     # AWS configuration
+│   └── config.js         # App configuration
+├── amplify/              # AWS Amplify Gen2 backend
+│   ├── backend.ts        # Backend definition
+│   └── functions/        # Lambda functions
+│       └── bedrock-chat/ # Bedrock integration
+├── scripts/              # Deployment scripts
+├── docs/                 # Documentation
+└── README.md
+```
 
-### Advanced Configuration
+## 🔧 Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Environment Variables
 
-### Deployment
+Create `.env` file:
+```bash
+REACT_APP_API_URL=http://localhost:3001
+REACT_APP_BEDROCK_REGION=us-west-2
+REACT_APP_BEDROCK_MODEL_ID=anthropic.claude-3-5-haiku-20241022-v1:0
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### AWS Configuration
 
-### `npm run build` fails to minify
+Ensure your AWS profile has permissions for:
+- Amazon Bedrock (InvokeModel)
+- Lambda (CreateFunction, UpdateFunctionCode)
+- API Gateway (CreateRestApi, CreateDeployment)
+- S3 (CreateBucket, PutObject)
+- CloudFront (CreateDistribution)
+- IAM (CreateRole, AttachRolePolicy)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🧪 Testing
+
+### Test API Endpoint
+```bash
+curl -X POST https://your-api-gateway-url/prod/bedrock-chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello, how are you?"}'
+```
+
+### Test Frontend
+```bash
+curl -I https://your-cloudfront-url
+```
+
+## 🔒 Security Features
+
+- **Private S3 Bucket**: No public access allowed
+- **Origin Access Control**: CloudFront-only access to S3
+- **HTTPS Enforced**: All traffic encrypted
+- **CORS Configured**: Secure cross-origin requests
+- **IAM Least Privilege**: Minimal required permissions
+
+## 📊 Cost Estimation
+
+Monthly costs (estimated):
+- Lambda: ~$0.20 (1M requests)
+- API Gateway: ~$3.50 (1M requests)  
+- CloudFront: ~$1.00 (10GB transfer)
+- S3: ~$0.50 (storage + requests)
+- Bedrock: Variable based on usage
+
+**Total**: ~$5.20/month + Bedrock token usage
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+1. **403 Forbidden on CloudFront**
+   - Wait 15-20 minutes for distribution deployment
+   - Check Origin Access Control configuration
+
+2. **CORS Errors**
+   - Verify API Gateway OPTIONS method
+   - Check Lambda CORS headers
+
+3. **Bedrock Access Denied**
+   - Ensure model access is enabled in Bedrock console
+   - Verify IAM permissions
+
+See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for detailed solutions.
+
+## 📚 Documentation
+
+- [Production Deployment Guide](./PRODUCTION-DEPLOYMENT-COMPLETE.md)
+- [Getting Started](./START-HERE.md)
+- [Troubleshooting Guide](./TROUBLESHOOTING.md)
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Amazon Web Services for Bedrock and infrastructure services
+- Anthropic for Claude 3.5 Haiku model
+- React team for the amazing framework
+- AWS Amplify team for the Gen2 platform
+
+## 📞 Support
+
+For issues and questions:
+- Create an issue in this repository
+- Check the troubleshooting guide
+- Review AWS CloudWatch logs
+
+---
+
+Built with ❤️ using AWS Amplify Gen2 and Amazon Bedrock
